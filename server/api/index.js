@@ -1,3 +1,4 @@
+console.log("ALL ENV KEYS:", Object.keys(process.env));
 import express from "express";
 const router = express.Router();
 
