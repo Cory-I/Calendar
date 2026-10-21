@@ -1,5 +1,7 @@
 /* Home Page */
+import useAuth from "../Auth/AuthContext";
 export default function HomePage() {
+  const { token } = useAuth();
   return (
     <div className="PageMain">
       <p>HomePage</p>

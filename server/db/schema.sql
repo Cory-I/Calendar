@@ -14,7 +14,8 @@ DROP TYPE IF EXISTS weekday_enum CASCADE;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     password TEXT NOT NULL,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    email TEXT NOT NULL
 );
 CREATE TABLE types (
     id SERIAL PRIMARY KEY,

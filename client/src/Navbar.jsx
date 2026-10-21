@@ -19,7 +19,10 @@ export default function Navbar({ token }) {
           )}
         </>
       ) : (
-        <NavLink to="/Login">Login</NavLink>
+        <>
+          <NavLink to="/Login">Login</NavLink>
+          <NavLink to="/Register">Register</NavLink>
+        </>
       )}
     </nav>
   );
