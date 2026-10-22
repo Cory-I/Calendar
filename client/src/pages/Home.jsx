@@ -1,7 +1,9 @@
 /* Home Page */
 import useAuth from "../Auth/AuthContext";
+import { useEffect, useState } from "react";
 export default function HomePage() {
-  const { token } = useAuth();
+  const [user, setUser] = useState(null);
+  const { token, getUser } = useAuth();
   return (
     <div className="PageMain">
       <p>HomePage</p>

@@ -1,7 +1,8 @@
 /* Navbar Page */
 import { NavLink, useLocation } from "react-router";
-
-export default function Navbar({ token }) {
+import useAuth from "./Auth/AuthContext";
+export default function Navbar() {
+  const { token } = useAuth();
   const location = useLocation();
   const onMonthView = location.pathname === "/MonthView";
 
@@ -9,7 +10,7 @@ export default function Navbar({ token }) {
     <nav>
       {token ? (
         <>
-          <NavLink to="/home">Home</NavLink>
+          <NavLink to="/Home">Home</NavLink>
           <NavLink to="/Settings">Settings</NavLink>
 
           {onMonthView ? (

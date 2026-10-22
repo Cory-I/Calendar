@@ -1,5 +1,7 @@
 /* Week View Page */
+import useAuth from "../Auth/AuthContext";
 export default function WeekView() {
+  const { token, getUser } = useAuth();
   return (
     <div className="PageMain">
       <p>WeekView</p>

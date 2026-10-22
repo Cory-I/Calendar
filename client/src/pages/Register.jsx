@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import useAuth from "../Auth/AuthContext";
 
 function RegisterPage() {
-  const { /* getUser, */ token, register } = useAuth();
+  const { token, register, getUser } = useAuth();
   const navigate = useNavigate();
 
   const [error, setError] = useState(null);
@@ -18,22 +18,13 @@ function RegisterPage() {
     try {
       await register(name, email, password);
       setAccountMade(true);
+      navigate("/Home");
+      console.log(token);
     } catch (e) {
       console.error(e);
       setError(e.message);
     }
   }
-
-  async function navigateHome() {
-    try {
-      navigate("/home");
-      window.location.reload();
-    } catch (e) {
-      console.error(e);
-      setError(e.message);
-    }
-  }
-
   return (
     <div>
       <h2>Create an Account</h2>

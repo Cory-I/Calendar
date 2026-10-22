@@ -1,5 +1,7 @@
 /* Month View Page */
+import useAuth from "../Auth/AuthContext";
 export default function MonthView() {
+  const { login, token, getUser } = useAuth();
   return (
     <div className="PageMain">
       <p>MonthView</p>

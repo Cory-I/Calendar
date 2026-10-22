@@ -13,8 +13,23 @@ export function AuthProvider({ children }) {
       headers: { "Content-Type": "application/json" },
     });
     setToken(response.data);
-    localStorage.setItem("authToken", response.data);
+    localStorage.setItem("authToken", response.data.token);
   };
+  async function getUser() {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.get("/api/users/me", config);
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
   async function login(email, password) {
     const userInfo = {
       email: email,
@@ -57,6 +72,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     userUpdate,
+    getUser,
   };
   return (
     <authContext.Provider value={authorization}>

@@ -4,7 +4,7 @@ import useAuth from "../Auth/AuthContext.jsx";
 import { useState } from "react";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, token, getUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
@@ -16,7 +16,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      navigate("/home");
+      navigate("/Home");
+      console.log(token);
     } catch (e) {
       console.error(e);
       setError(e.message);
