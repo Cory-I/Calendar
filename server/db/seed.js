@@ -14,6 +14,20 @@ const seed = async () => {
   await client.query(schema);
 
   console.log("Database schema created.");
+  await client.query(`
+  INSERT INTO types (name, color)
+  VALUES
+    ('Meeting', '#4285F4'),
+    ('Appointment', '#34A853'),
+    ('Reminder', '#FBBC05'),
+    ('Holiday', '#EA4335');
+`);
+  await client.query(`
+  INSERT INTO groups (name)
+  VALUES
+    ('Family'),
+    ('Work');
+`);
 };
 
 export default seed;

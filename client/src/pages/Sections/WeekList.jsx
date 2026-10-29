@@ -1,19 +1,33 @@
 import { useMemo } from "react";
+
 export default function WeekList({ weekStartDate, events = [] }) {
   const weekDays = useMemo(() => {
     const days = [];
+
     for (let i = 0; i < 7; i++) {
       const current = new Date(weekStartDate);
+
       current.setDate(current.getDate() + i);
+
       const dateString = current.toISOString().split("T")[0];
-      const dayEvents = events.filter((event) => event.date === dateString);
+
+      const dayEvents = events.filter((event) => {
+        const eventDate = new Date(event.start_time)
+          .toISOString()
+          .split("T")[0];
+
+        return eventDate === dateString;
+      });
+
       days.push({
         date: current,
         events: dayEvents,
       });
     }
+
     return days;
   }, [weekStartDate, events]);
+
   return (
     <div className="week-list">
       {weekDays.map((day) => (

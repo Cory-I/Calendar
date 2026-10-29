@@ -1,6 +1,16 @@
-import { useMemo } from "react";
-
-export default function MonthGrid({ year, month, eventCounts = {} }) {
+import { useMemo, useState, useEffect } from "react";
+import EventPopup from "./EventPopUp.jsx";
+import axios from "axios";
+import useAuth from "../../Auth/AuthContext.jsx";
+export default function MonthGrid({ year, month }) {
+  const { token, getUser } = useAuth();
+  //popup
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showEventPopup, setShowEventPopup] = useState(false);
+  const [types, setTypes] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [events, setEvents] = useState([]);
+  //popup
   const calendarDays = useMemo(() => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -22,15 +32,53 @@ export default function MonthGrid({ year, month, eventCounts = {} }) {
       dateBox.push({
         day,
         dateString,
-        count: eventCounts[dateString] || 0,
       });
     }
     while (dateBox.length % 7 !== 0) {
       dateBox.push(null);
     }
     return dateBox;
-  }, [year, month, eventCounts]);
+  }, [year, month]);
+  //popup
+  const handleDayClick = (day) => {
+    setSelectedDate(day);
+    setShowEventPopup(true);
+  };
+  const createEventHandler = async (eventData) => {
+    try {
+      await axios.post("/api/events", eventData);
 
+      await loadEvents();
+    } catch (error) {
+      console.error("Failed to create event", error);
+    }
+  };
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [typesResponse, groupsResponse] = await Promise.all([
+          axios.get("/api/types"),
+          axios.get("/api/groups"),
+        ]);
+
+        setTypes(typesResponse.data);
+        setGroups(groupsResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadData();
+  }, []);
+  //popup
+  const loadEvents = async () => {
+    const { data } = await axios.get("/api/events");
+
+    setEvents(data);
+  };
+  useEffect(() => {
+    loadEvents();
+  }, []);
   return (
     <div className="calendar">
       <div className="calendar-header">Sun</div>
@@ -41,21 +89,46 @@ export default function MonthGrid({ year, month, eventCounts = {} }) {
       <div className="calendar-header">Fri</div>
       <div className="calendar-header">Sat</div>
 
-      {calendarDays.map((day, index) =>
-        day ? (
-          <div key={day.dateString} className="calendar-cell">
-            <div className="day-number">{day.day}</div>
+      {showEventPopup && (
+        <EventPopup
+          date={selectedDate}
+          types={types}
+          groups={groups}
+          onClose={() => setShowEventPopup(false)}
+          onCreateEvent={createEventHandler}
+        />
+      )}
+      {calendarDays.map((day, index) => {
+        if (!day) {
+          return <div key={`empty-${index}`} className="calendar-cell empty" />;
+        }
 
-            <div className="event-count">
-              {day.count === 0
+        const dayEvents = events.filter((event) => {
+          const eventDate = new Date(event.start_time)
+            .toISOString()
+            .split("T")[0];
+
+          return eventDate === day.dateString;
+        });
+
+        return (
+          <div key={day.dateString} className="calendar-cell">
+            <div className="day-number" onClick={() => handleDayClick(day)}>
+              {day.day}
+            </div>
+
+            <div className="event-list">
+              {dayEvents.length === 0
                 ? "No Events"
-                : `${day.count} Event${day.count > 1 ? "s" : ""}`}
+                : dayEvents.map((event) => (
+                    <div key={event.id} className="calendar-event">
+                      {event.name}
+                    </div>
+                  ))}
             </div>
           </div>
-        ) : (
-          <div key={`empty-${index}`} className="calendar-cell empty" />
-        ),
-      )}
+        );
+      })}
     </div>
   );
 }
